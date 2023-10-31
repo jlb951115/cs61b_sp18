@@ -104,6 +104,8 @@ public class IntList {
         //TODO:  fill in method
         if (A == null) {
             return new IntList(B.first, B.rest);
+        } else if (B == null) {
+            return A;
         } else if (A.rest == null) {
             return new IntList(A.first, B);
         } else {
