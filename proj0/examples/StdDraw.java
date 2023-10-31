@@ -294,14 +294,6 @@ import javax.swing.KeyStroke;
  *  The image will display at its native size, independent of the coordinate system.
  *  Optionally, you can rotate the image a specified number of degrees counterclockwise
  *  or rescale it to fit snugly inside a width-by-height bounding box.
- *  <p>
- *  <b>Saving to a file.</b>
- *  You save your image to a file using the <em>File → Save</em> menu option.
- *  You can also save a file programatically using the following method:
- *  <ul>
- *  <li> {@link #save(String filename)}
- *  </ul>
- *  <p>
  *  The supported image formats are JPEG and PNG. The filename must have either the
  *  extension .jpg or .png.
  *  We recommend using PNG for drawing that consist solely of geometric shapes and JPEG 
@@ -430,7 +422,6 @@ import javax.swing.KeyStroke;
  *       that is NaN will behave as if it is outside the canvas, and will not be visible.
  *  <li> Due to floating-point issues, an object drawn with an <em>x</em>- or
  *       <em>y</em>-coordinate that is way outside the canvas (such as the line segment
- *       from (0.5, –&infin;) to (0.5, &infin;) may not be visible even in the
  *       part of the canvas where it should be.
  *  </ul>
  *  <p>
@@ -1185,9 +1176,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 
     /**
      * Draws a polygon with the vertices 
-     * (<em>x</em><sub>0</sub>, <em>y</em><sub>0</sub>),
-     * (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>), ...,
-     * (<em>x</em><sub><em>n</em>–1</sub>, <em>y</em><sub><em>n</em>–1</sub>).
+
      *
      * @param  x an array of all the <em>x</em>-coordinates of the polygon
      * @param  y an array of all the <em>y</em>-coordinates of the polygon
@@ -1218,8 +1207,6 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>), ...,
      * (<em>x</em><sub><em>n</em>–1</sub>, <em>y</em><sub><em>n</em>–1</sub>).
      *
-     * @param  x an array of all the <em>x</em>-coordinates of the polygon
-     * @param  y an array of all the <em>y</em>-coordinates of the polygon
      * @throws IllegalArgumentException unless {@code x[]} and {@code y[]}
      *         are of the same length
      */
