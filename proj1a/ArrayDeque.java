@@ -73,7 +73,7 @@ public class ArrayDeque<T> {
         T x = item[plusone(nextfirst)];
         nextfirst = plusone(nextfirst);
         size--;
-        if (item.length > REF && ((size / item.length) < 0.25)) {
+        if (item.length > REF && size < item.length * 0.25) {
             resize(2 * size);
         }
         return x;
@@ -86,7 +86,7 @@ public class ArrayDeque<T> {
         T x = item[minusone(nextlast)];
         nextlast = minusone(nextlast);
         size--;
-        if (item.length > REF && ((size / item.length) < 0.25)) {
+        if (item.length > REF && size < item.length * 0.25) {
             resize(2 * size);
         }
         return x;
