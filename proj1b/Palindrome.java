@@ -15,8 +15,9 @@ public class Palindrome {
             } else {
                 Character a = ref.removeFirst();
                 Character b = ref.removeLast();
-                if (a != b)
+                if (a != b) {
                     return false;
+                }
             }
         }
         return true;
@@ -29,8 +30,9 @@ public class Palindrome {
             } else {
                 Character a = ref.removeFirst();
                 Character b = ref.removeLast();
-                if (!cc.equalChars(a, b))
+                if (!cc.equalChars(a, b)) {
                     return false;
+                }
             }
         }
         return true;
