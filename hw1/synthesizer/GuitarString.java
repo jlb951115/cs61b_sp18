@@ -1,4 +1,3 @@
-// TODO: Make sure to make this class a part of the synthesizer package
 package synthesizer;
 
 //Make sure this class is public
@@ -14,10 +13,6 @@ public class GuitarString {
 
     /* Create a guitar string of the given frequency.  */
     public GuitarString(double frequency) {
-        // TODO: Create a buffer with capacity = SR / frequency. You'll need to
-        //       cast the result of this divsion operation into an int. For better
-        //       accuracy, use the Math.round() function before casting.
-        //       Your buffer should be initially filled with zeros.
         double t = SR / frequency;
         int size = (int) Math.round(t);
         buffer = new ArrayRingBuffer<Double>(size);
@@ -29,11 +24,6 @@ public class GuitarString {
 
     /* Pluck the guitar string by replacing the buffer with white noise. */
     public void pluck() {
-        // TODO: Dequeue everything in the buffer, and replace it with random numbers
-        //       between -0.5 and 0.5. You can get such a number by using:
-        //       double r = Math.random() - 0.5;
-        //
-        //       Make sure that your random numbers are different from each other.
         int size = buffer.fillCount();
         for (int i = 0; i < size; i++) {
             buffer.dequeue();
@@ -48,9 +38,6 @@ public class GuitarString {
      * the Karplus-Strong algorithm. 
      */
     public void tic() {
-        // TODO: Dequeue the front sample and enqueue a new sample that is
-        //       the average of the two multiplied by the DECAY factor.
-        //       Do not call StdAudio.play().
         double x = buffer.dequeue();
         x = DECAY * (x + sample()) / 2;
         buffer.enqueue(x);
@@ -58,7 +45,6 @@ public class GuitarString {
 
     /* Return the double at the front of the buffer. */
     public double sample() {
-        // TODO: Return the correct thing.
         return buffer.peek();
     }
 }
