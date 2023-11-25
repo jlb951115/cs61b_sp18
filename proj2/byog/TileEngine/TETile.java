@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
-import edu.princeton.cs.introcs.StdDraw;
+//import edu.princeton.cs.introcs.StdDraw;
 import byog.Core.RandomUtils;
 
 /**
@@ -82,7 +82,7 @@ public class TETile implements Serializable {
      * @param x x coordinate
      * @param y y coordinate
      */
-    public void draw(double x, double y) {
+   /* public void draw(double x, double y) {
         if (filepath != null) {
             try {
                 StdDraw.picture(x + 0.5, y + 0.5, filepath);
@@ -98,7 +98,7 @@ public class TETile implements Serializable {
         StdDraw.setPenColor(textColor);
         StdDraw.text(x + 0.5, y + 0.5, Character.toString(character()));
     }
-
+*/
     /** Character representation of the tile. Used for drawing in text mode.
      * @return character representation
      */

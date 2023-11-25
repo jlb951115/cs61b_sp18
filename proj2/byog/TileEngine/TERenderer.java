@@ -1,16 +1,18 @@
 package byog.TileEngine;
 
-import edu.princeton.cs.introcs.StdDraw;
+//import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.Serializable;
+
 /**
  * Utility class for rendering tiles. You do not need to modify this file. You're welcome
  * to, but be careful. We strongly recommend getting everything else working before
  * messing with this renderer, unless you're trying to do something fancy like
  * allowing scrolling of the screen or tracking the player or something similar.
  */
-public class TERenderer {
+public class TERenderer implements Serializable {
     private static final int TILE_SIZE = 16;
     private int width;
     private int height;
@@ -26,7 +28,7 @@ public class TERenderer {
      * @param w width of the window in tiles
      * @param h height of the window in tiles.
      */
-    public void initialize(int w, int h, int xOff, int yOff) {
+  /*  public void initialize(int w, int h, int xOff, int yOff) {
         this.width = w;
         this.height = h;
         this.xOffset = xOff;
@@ -41,7 +43,7 @@ public class TERenderer {
 
         StdDraw.enableDoubleBuffering();
         StdDraw.show();
-    }
+    }*/
 
     /**
      * Initializes StdDraw parameters and launches the StdDraw window. w and h are the
@@ -56,7 +58,7 @@ public class TERenderer {
      * @param w width of the window in tiles
      * @param h height of the window in tiles.
      */
-    public void initialize(int w, int h) {
+   /* public void initialize(int w, int h) {
         initialize(w, h, 0, 0);
     }
 
@@ -82,7 +84,7 @@ public class TERenderer {
      * the screen in tiles.
      * @param world the 2D TETile[][] array to render
      */
-    public void renderFrame(TETile[][] world) {
+   /* public void renderFrame(TETile[][] world) {
         int numXTiles = world.length;
         int numYTiles = world[0].length;
         StdDraw.clear(new Color(0, 0, 0));
@@ -92,9 +94,9 @@ public class TERenderer {
                     throw new IllegalArgumentException("Tile at position x=" + x + ", y=" + y
                             + " is null.");
                 }
-                world[x][y].draw(x + xOffset, y + yOffset);
+               // world[x][y].draw(x + xOffset, y + yOffset);
             }
         }
         StdDraw.show();
-    }
+    }*/
 }

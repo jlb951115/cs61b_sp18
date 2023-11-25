@@ -1,5 +1,7 @@
 package byog.SaveDemo;
 
+import byog.Core.finalworld;
+import edu.princeton.cs.introcs.StdDraw;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import edu.princeton.cs.introcs.StdDraw;
+
 public class Main {
     public static void main(String[] args) {
         StdDraw.enableDoubleBuffering();
@@ -33,7 +35,7 @@ public class Main {
         }
     }
 
-    private static void drawEverything(World w) {
+  private static void drawEverything(World w) {
         StdDraw.clear(StdDraw.BLACK);
         w.draw();
         StdDraw.setPenColor(StdDraw.WHITE);
