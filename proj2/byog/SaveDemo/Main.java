@@ -1,6 +1,5 @@
 package byog.SaveDemo;
 
-import edu.princeton.cs.introcs.StdDraw;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,7 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
+import edu.princeton.cs.introcs.StdDraw;
 public class Main {
     public static void main(String[] args) {
         StdDraw.enableDoubleBuffering();
