@@ -1,271 +1,128 @@
 package byog.Core;
 
-
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
+import java.util.Random;
 
-import java.io.*;
-import java.util.*;
+import static java.awt.event.KeyEvent.*;
 
-import static byog.Core.Main.loadWorld;
-
-class position {
-    int x;
-    int y;
-    int hi;
-    int wi;
-    position(int x,int y,int wi,int hi){
-        this.x = x;
-        this.y = y;
-        this.wi = wi;
-        this.hi = hi;
-    }
-}
-class Po{
-    int x;
-    int y;
-    public Po(int x,int y){
-        this.x = x;
-        this.y = y;
-    }
-}
-public class Game implements Serializable{
-    private static final long serialVersionUID = 1110230413363401157L;
-    static Comparator<position> cmp = new Comparator<position>() {
-        public int compare(position e1, position e2) {
-            return e1.x - e2.x;
-        }
-    };
-    public static int is_load = 0;
-    public  int is_new ;
-    public long seed;
-    public  int WIDTH = 50;
-    public  int HEIGHT = 50;
-    TETile[][] tiles;
-    Random a;
-    transient Queue<position> q;
-    transient Queue<Po> p;
-    String str ;
-    public Game(){
-        this.tiles = new TETile[WIDTH][HEIGHT];
-        this.q= new PriorityQueue<>(cmp);
-        this.seed = 0;
-        this.is_new = 0;
-        this.str = "";
-        this.a = new Random(seed);
-        this.p= new LinkedList<Po>();
-    }
-
-    public int ax;
-    public int ay;
-
-    public  void addrandomroom() {
-        int high = RandomUtils.uniform(a, 2, 6);
-        int wide = RandomUtils.uniform(a, 2, 6);
-        int start1 = RandomUtils.uniform(a, 1, HEIGHT - 1);;
-        int start2 = RandomUtils.uniform(a, 1, WIDTH - 1);
-        if (start1 + high < WIDTH && start2 + wide < HEIGHT) {
-            if (tiles[start1][start2] == Tileset.NOTHING && tiles[start1 + high - 1][start2] == Tileset.NOTHING &&
-                    tiles[start1][start2 + wide - 1] == Tileset.NOTHING && tiles[start1 + high - 1][start2 + wide - 1] == Tileset.NOTHING) {
-                for (int i = start1; i < start1 + high; i += 1) {
-                    for (int j = start2; j < start2 + wide; j += 1) {
-                        tiles[i][j] = Tileset.FLOOR;
-                    }
-                }
-                for (int i = start1 - 1; i <= start1 + high; i += 1) {
-                    for (int j = start2 - 1; j <= start2 + wide; j += 1) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-                    }
-                }
-                position temp = new position(start1,start2,wide,high);
-                q.add(temp);
-            }
-        }
-    }
-    public  void addhallways(){
-        position b = q.poll();
-        int x1,y1;
-        int x2,y2;
-        x1 = RandomUtils.uniform(a, b.x , b.x + b.hi);
-        y1 = RandomUtils.uniform(a, b.y , b.y + b.wi);
-        position c = q.poll();
-        x2 = RandomUtils.uniform(a, c.x , c.x + c.hi);
-        y2 = RandomUtils.uniform(a, c.y , c.y + c.wi);
-        tiles[x2][y2] = Tileset.FLOOR;
-        tiles[x1][y1] = Tileset.FLOOR;
-        int minx = x1 <= x2 ? x1 : x2;
-        int miny = y1 <= y2 ? y1 : y2;
-        for (int i = minx;i <= (x1 + x2) - minx; i += 1){
-            tiles[i][y2] = Tileset.FLOOR;
-        }
-        for (int i = miny;i <= (y2 + y1) - miny; i += 1){
-            tiles[x1][i] = Tileset.FLOOR;
-        }
-
-        q.add(c);
-    }
-    public void addwall(){
-
-        for (int i = 0;i < HEIGHT ;i += 1){
-            for (int j = 0;j < WIDTH ;j += 1) {
-                if (i > 0 && i < HEIGHT - 1) {
-                    if (tiles[i + 1][j] == Tileset.FLOOR || tiles[i - 1][j] == Tileset.FLOOR) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-
-                    }
-
-                }
-                else if (i == 0){
-                    if(tiles[i + 1][j] == Tileset.FLOOR) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-                        Po t = new Po(i,j);
-                        p.add(t);
-
-                    }
-                }
-                else if (i == HEIGHT - 1){
-                    if(tiles[i - 1][j] == Tileset.FLOOR) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-                        Po t = new Po(i,j);
-                        p.add(t);
-
-                    }
-                }
-                if (j > 0 && j < HEIGHT - 1) {
-                    if (tiles[i][j + 1] == Tileset.FLOOR || tiles[i][j - 1] == Tileset.FLOOR) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-                        Po t = new Po(i,j);
-                        p.add(t);
-                    }
-
-                }
-                else if (j == 0){
-                    if(tiles[i][j + 1] == Tileset.FLOOR) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-                        Po t = new Po(i,j);
-                        p.add(t);
-                    }
-                }
-                else if (j == HEIGHT - 1){
-                    if(tiles[i][j - 1] == Tileset.FLOOR) {
-                        if (tiles[i][j] == Tileset.NOTHING)
-                            tiles[i][j] = Tileset.WALL;
-                        Po t = new Po(i,j);
-                        p.add(t);
-
-                    }
-                }
-
-            }
-
-        }
-
-    }
-
-
-    public  void adddour(){
-        int x = 0;
-        int y= 0;
-        while (p.isEmpty() == false) {
-            Po k = p.poll();
-            x = k.x;
-            y = k.y;
-            if (x > 0 && y > 0 && y < WIDTH - 1 && x < HEIGHT - 1) {
-                if (tiles[x][y - 1] == Tileset.NOTHING && tiles[x][y + 1] == Tileset.FLOOR)
-                    break;
-                if (tiles[x][y - 1] == Tileset.FLOOR && tiles[x][y + 1] == Tileset.NOTHING)
-                    break;
-                if (tiles[x - 1][y] == Tileset.FLOOR && tiles[x + 1][y] == Tileset.NOTHING)
-                    break;
-                if (tiles[x - 1][y] == Tileset.NOTHING && tiles[x + 1][y] == Tileset.FLOOR)
-                    break;
-            }
-        }
-        tiles[x][y] = Tileset.LOCKED_DOOR;
-
-    }
-    public  void init(){
-        for (int x = 0; x < HEIGHT; x += 1) {
-            for (int y = 0; y < WIDTH; y += 1) {
-                tiles[x][y] = Tileset.NOTHING;
-            }
-        }
-
-    }
+public class Game {
+    TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
-    public void startplay () {
-        int tx,ty;
-        while (true) {
-            tx = RandomUtils.uniform(a, 0, WIDTH - 1);
-            ty = RandomUtils.uniform(a, 0, HEIGHT - 1);
-            if (tiles[tx][ty] == Tileset.FLOOR)
-                break;
-        }
-        tiles[tx][ty] = Tileset.PLAYER;
-        this.ax = tx;
-        this.ay = ty;
+    public static final int WIDTH = 80;
+    public static final int HEIGHT = 30;
+
+    private static final int MAX_ROOMLENGTH = 8;
+    private static final int MIN_ROOMLENGTH = 3;
+
+    //seed 3 is good for 50 rooms
+    private static Random RANDOM;
+
+    private static Player player = new Player();
+    private static Rooms[] rooms;
+
+    private static int roomNum;
+
+    private void drawMenu(){
+        //Font font = new Font("Monaco", Font.BOLD, 30);
+        //StdDraw.setFont(font);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(0.5, 0.6, "Wokki Game");
+        StdDraw.text(0.5, 0.5, "(N)ew Game");
+        StdDraw.text(0.5, 0.45, "(L)oad");
+        StdDraw.text(0.5, 0.4, "(Q)uit");
+        StdDraw.show();
     }
-    public void playString() {
-        for (int i = 0; i < str.length(); i += 1){
-            char c = str.charAt(i);
-            if (c == 'a' && tiles[ax - 1][ay].character() != Tileset.WALL.character()) {
-                tiles[ax - 1][ay] = Tileset.PLAYER;
-                tiles[ax][ay] = Tileset.FLOOR;
-                ax -= 1;
-            }
-            else if (c == 'd' && tiles[ax + 1][ay].character() != Tileset.WALL.character()) {
-                tiles[ax + 1][ay] = Tileset.PLAYER;
-                tiles[ax][ay] = Tileset.FLOOR;
-                ax += 1;
-            }
-            else if (c == 's' && tiles[ax][ay - 1].equals(Tileset.WALL) == false) {
-                tiles[ax][ay - 1] = Tileset.PLAYER;
-                tiles[ax][ay] = Tileset.FLOOR;
-                ay -= 1;
-            }
-            else if (c == 'w' && tiles[ax][ay + 1].character() != Tileset.WALL.character()) {
-                tiles[ax][ay + 1] = Tileset.PLAYER;
-                tiles[ax][ay] = Tileset.FLOOR;
-                ay += 1;
-            }
-
-
-        }
+    private void drawMenu(String seedString){
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(0.5, 0.6, "Wokki Game");
+        StdDraw.text(0.5, 0.5, "(N)ew Game");
+        StdDraw.text(0.5, 0.45, "(L)oad");
+        StdDraw.text(0.5, 0.4, "(Q)uit");
+        StdDraw.text(0.5, 0.3, "Enter seed: " + seedString);
+        StdDraw.show();
     }
-    public  void createworld(){
-        init();
-
-        int n = RandomUtils.uniform(a, 5, 50);
-
-        while (n > 0){
-            addrandomroom();
-            n -= 1;
-        }
-        //System.out.println("test3");
-        while (q.size() >= 2)
-            addhallways();
-        addwall();
-        // System.out.println("test4");
-        adddour();
-        startplay();
-        playString();
-
-    }
-
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
-     *
-     * @return
      */
+
+    public void playWithKeyboard() {
+
+        StdDraw.enableDoubleBuffering();
+
+        Long seed = -1L;
+        boolean gameOver = false;
+        boolean menuScreen = true;
+        boolean seeding = false;
+        String seedString = "";
+        while(menuScreen) {
+            if(!seeding) { drawMenu();}
+            else{ drawMenu(seedString); }
+
+            if(StdDraw.hasNextKeyTyped()){
+                char keyPressed = StdDraw.nextKeyTyped();
+                switch(keyPressed) {
+                    case 'n':
+                        seeding = true;
+                        seedString = "";
+                        break;
+                    case 's':
+                        if(seeding) {
+                            seed = Long.parseLong(seedString);
+                            menuScreen = false;
+                        }
+                        break;
+                    default:
+                        if(seeding) { seedString += keyPressed; }
+                        break;
+
+                }
+
+            }
+        }
+        setSeed(seed);
+        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] randomWorld = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                randomWorld[x][y] = Tileset.NOTHING;
+            }
+        }
+
+        initializeRandomRooms(100);
+
+        int startRoomNum = roomNum;
+        player.setPosition(rooms[startRoomNum].x + 1, rooms[startRoomNum].y + 1);
+
+        while(!gameOver) {
+
+
+
+
+            setRooms(randomWorld);
+            setPlayer(randomWorld);
+
+            ter.renderFrame(randomWorld);
+
+            if(StdDraw.hasNextKeyTyped()){
+
+                processInput(randomWorld, StdDraw.nextKeyTyped());
+
+            }
+
+
+        }
+
+
+    }
+
     /**
      * Method used for autograding and testing the game code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
@@ -275,7 +132,6 @@ public class Game implements Serializable{
      * world. However, the behavior is slightly different. After playing with "n123sss:q", the game
      * should save, and thus if we then called playWithInputString with the string "l", we'd expect
      * to get the exact same world back again, since this corresponds to loading the saved game.
-     *
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
@@ -283,45 +139,288 @@ public class Game implements Serializable{
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        int i = 1;
-        if (input.charAt(0) == 'N' || input.charAt(0) == 'n') {
-            long sum = 0;
-            for (i = 1; i < input.length(); i += 1) {
-                if (input.charAt(i) >= '0' && input.charAt(i) <= '9') {
-                    sum = sum * 10 + input.charAt(i) - '0';
-                } else {
-                    this.seed = sum;
-                    this.a = new Random(seed);
-                    break;
-                }
+        boolean gameOver = false;
+        Long seed = -1L;
+        if(input.toLowerCase().contains("n") && input.toLowerCase().contains("s")){
+             int start = input.toLowerCase().indexOf("n") + 1;
+             int end = input.toLowerCase().indexOf("s");
+             try {
+                 seed = Long.parseLong(input.substring(start, end));
+             }catch(Exception e){
+                 throw new RuntimeException("Seed has to be an integer. You entered: \"" + input.substring(start, end) + "\"");
+             }
+        }
 
+        setSeed(seed);
+        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] randomWorld = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                randomWorld[x][y] = Tileset.NOTHING;
             }
         }
 
+        initializeRandomRooms(100);
 
-        for (int j = i; j < input.length(); j += 1) {
-            if (input.charAt(j) >= 'a' && input.charAt(j) <= 'z') {
-                this.str = this.str + input.charAt(j);
+        int startRoomNum = roomNum;
+        player.setPosition(rooms[startRoomNum].x + 1, rooms[startRoomNum].y + 1);
+
+        while(!gameOver) {
+
+
+
+            setRooms(randomWorld);
+            setPlayer(randomWorld);
+            ter.renderFrame(randomWorld);
+
+            while(StdDraw.hasNextKeyTyped()){
+                processInput(randomWorld, StdDraw.nextKeyTyped());
             }
-            if (input.charAt(j) == ':') {
-                is_new = 1;
+
+        }
+
+        TETile[][] finalWorldFrame = randomWorld;
+        return finalWorldFrame;
+    }
+
+    //Game configuration methods starting from here:
+
+
+    public static void setSeed(Long seed){
+        RANDOM = new Random(seed);
+    }
+    private static boolean collidedWithPreviousRooms(Rooms[] rooms, int i){ // use to check if rooms[i+1] is collided with previous i rooms.
+
+        for(int j = 0; j <= i; j++){
+            if(rooms[i + 1].isCollided(rooms[j])){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static void branchTop(Rooms[] rooms, int i){
+        if (HEIGHT - (rooms[i].y + rooms[i].roomHeight) < MIN_ROOMLENGTH){
+            return;
+        }
+        int x = (rooms[i].roomWidth == MIN_ROOMLENGTH) ?
+                rooms[i].x : RANDOM.nextInt(rooms[i].roomWidth - MIN_ROOMLENGTH) + rooms[i].x;
+        int y = rooms[i].y + rooms[i].roomHeight;
+        int width = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, WIDTH - x);
+        int height = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, HEIGHT - y);
+
+        rooms[i + 1] = new Rooms(x, y, width, height);
+        if(collidedWithPreviousRooms(rooms, i)){
+            rooms[i + 1] = null;
+        }else{
+            //create doors when branching top.
+            int leftBound = rooms[i + 1].x + 1;
+            int rightBound = Math.min(rooms[i].x + rooms[i].roomWidth - 2, rooms[i + 1].x + rooms[i + 1].roomWidth - 2);
+            //x + rW - 1 is the x pos of the room's right most block, need to use x + rW - 2 because the door can't be at the corner.
+
+            //X0 and Y0 is door position for room[i]'s second door and X1 & Y1 for room[i + 1]'s first door
+            int doorX0 = (rightBound - leftBound == 0) ? rightBound : RANDOM.nextInt(rightBound - leftBound) + leftBound;
+            int doorY0 = y - 1;
+            int doorX1 = doorX0;
+            int doorY1 = y;
+
+            rooms[i].createDoor(1, doorX0, doorY0);
+            rooms[i + 1].createDoor(0, doorX1, doorY1);
+        }
+    }
+    public static  void branchBot(Rooms[] rooms, int i){
+        if (rooms[i].y < MIN_ROOMLENGTH){
+            return;
+        }
+        int x = (rooms[i].roomWidth == MIN_ROOMLENGTH) ?
+                rooms[i].x : RANDOM.nextInt(rooms[i].roomWidth - MIN_ROOMLENGTH) + rooms[i].x;
+        int width = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, WIDTH - x);
+        int height = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, rooms[i].y);
+        int y = rooms[i].y - height;
+
+        rooms[i + 1] = new Rooms(x, y, width, height);
+        if(collidedWithPreviousRooms(rooms, i)){
+            rooms[i + 1] = null;
+        }else{
+            //create doors when branching top.
+            int leftBound = rooms[i + 1].x + 1;
+            int rightBound = Math.min(rooms[i].x + rooms[i].roomWidth - 2, rooms[i + 1].x + rooms[i + 1].roomWidth - 2);
+            //x + rW - 1 is the x pos of the room's right most block, need to use x + rW - 2 because the door can't be at the corner.
+
+            int doorX0 = (rightBound - leftBound == 0) ? rightBound : RANDOM.nextInt(rightBound - leftBound) + leftBound;
+            int doorY0 = rooms[i].y;
+            int doorX1 = doorX0;
+            int doorY1 = rooms[i].y - 1;
+
+            rooms[i].createDoor(1, doorX0, doorY0);
+            rooms[i + 1].createDoor(0, doorX1, doorY1);
+        }
+    }
+    public static void branchLeft(Rooms[] rooms, int i){
+        if (rooms[i].x < MIN_ROOMLENGTH){
+            return;
+        }
+        int y = (rooms[i].roomHeight == MIN_ROOMLENGTH) ?
+                rooms[i].y : RANDOM.nextInt(rooms[i].roomHeight - MIN_ROOMLENGTH) + rooms[i].y;
+        int height = (Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, HEIGHT - y));
+        int width = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, rooms[i].x);
+        int x = rooms[i].x - width;
+
+        rooms[i + 1] = new Rooms(x, y, width, height);
+        if(collidedWithPreviousRooms(rooms, i)){
+            rooms[i + 1] = null;
+        }else{
+            //create doors for two rooms when branching left.
+            int botBound = rooms[i + 1].y + 1;
+            int topBound = Math.min(rooms[i].y + rooms[i].roomHeight - 2, rooms[i + 1].y + rooms[i + 1].roomHeight - 2);
+
+            int doorX0 = rooms[i].x;
+            int doorY0 = (topBound - botBound == 0) ? topBound : RANDOM.nextInt(topBound - botBound) + botBound;
+            int doorX1 = rooms[i].x - 1;
+            int doorY1 = doorY0;
+
+            rooms[i].createDoor(1, doorX0, doorY0);
+            rooms[i + 1].createDoor(0, doorX1, doorY1);
+
+        }
+    }
+    public static void branchRight(Rooms[] rooms, int i){
+        if (WIDTH - (rooms[i].x + rooms[i].roomWidth) < MIN_ROOMLENGTH){
+            return;
+        }
+        int y = (rooms[i].roomHeight == MIN_ROOMLENGTH) ?
+                rooms[i].y : RANDOM.nextInt(rooms[i].roomHeight - MIN_ROOMLENGTH) + rooms[i].y;
+        int x = rooms[i].x + rooms[i].roomWidth;
+        int height = (Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, HEIGHT - y));
+        int width = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, WIDTH - x);
+
+        rooms[i + 1] = new Rooms(x, y, width, height);
+        if(collidedWithPreviousRooms(rooms, i)){
+            rooms[i + 1] = null;
+        }else{
+            //create doors for two rooms when branching right.
+            int botBound = rooms[i + 1].y + 1;
+            int topBound = Math.min(rooms[i].y + rooms[i].roomHeight - 2, rooms[i + 1].y + rooms[i + 1].roomHeight - 2);
+
+            int doorX0 = x - 1;
+            int doorY0 = (topBound - botBound == 0) ? topBound : RANDOM.nextInt(topBound - botBound) + botBound;
+            int doorX1 = x;
+            int doorY1 = doorY0;
+
+            rooms[i].createDoor(1, doorX0, doorY0);
+            rooms[i + 1].createDoor(0, doorX1, doorY1);
+        }
+    }
+    public static void branchRoom(Rooms[] rooms, int i){
+        int trial = 0;
+        while(rooms[i + 1] == null){
+            switch(RANDOM.nextInt(4)){//RANDOM.nextInt(4)
+                case 0:
+                    branchTop(rooms, i);
+                    trial++;
+                    break;
+                case 1:
+                    branchBot(rooms, i);
+                    trial++;
+                    break;
+                case 2:
+                    branchLeft(rooms, i);
+                    trial++;
+                    break;
+                case 3:
+                    branchRight(rooms, i);
+                    trial++;
+                    break;
+                default:
+                    break;
+            }
+            if(trial >= 50){
+                roomNum = i;
+                System.out.println("Failed to create room[" + Integer.toString(i + 1) + "], total Room number: " + Integer.toString(roomNum));
+
                 break;
             }
         }
-        if (input.charAt(0) == 'l'){
-            playString();
+    }
 
+    public static void initializeRandomRooms(int n){
+        rooms = new Rooms[n];
+        int x = RANDOM.nextInt(WIDTH - MIN_ROOMLENGTH); //x_Pos
+        int y = RANDOM.nextInt(HEIGHT - MIN_ROOMLENGTH);//y_Pos
+        int roomWidth = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, WIDTH - x);
+        int roomHeight = Math.min(RANDOM.nextInt(MAX_ROOMLENGTH - MIN_ROOMLENGTH) + MIN_ROOMLENGTH, HEIGHT - y);
+        //creating the first room at a random location.
+        rooms[0] = new Rooms(x, y, roomWidth, roomHeight);
+
+        //start branching rooms based on the very first room.
+        for(int i = 0; i < n - 1; i++){
+            branchRoom(rooms,i);
+            if(rooms[i + 1] == null){
+                break;
+            }
         }
-        if (input.charAt(0) == 'n')
-        createworld();
-        return this.tiles;
-
-
-    }
-    public void playWithKeyboard(){
-        return;
     }
 
+    public static void generateRandomRooms(int n){
+        rooms = new Rooms[n];
+        int x = RANDOM.nextInt(WIDTH - 4) + 1; //x_Pos
+        int y = RANDOM.nextInt(HEIGHT - 4) + 1;//y_Pos
+        int roomWidth = Math.min(RANDOM.nextInt(6) + 3, WIDTH - 1 - x);
+        int roomHeight = Math.min(RANDOM.nextInt(6) + 3, HEIGHT - 1 - y);
+        //creating the first room at a random location.
+        rooms[0] = new Rooms(x, y, roomWidth, roomHeight);
+        for(int i = 0; i < n - 1; i++){
+            while(rooms[i + 1] == null) {
+                x = RANDOM.nextInt(WIDTH - 4) + 1; //x_Pos
+                y = RANDOM.nextInt(HEIGHT - 4) + 1;//y_Pos
+                roomWidth = Math.min(RANDOM.nextInt(6) + 3, WIDTH - 1 - x);
+                roomHeight = Math.min(RANDOM.nextInt(6) + 3, HEIGHT - 1 - y);
+                rooms[i + 1] = new Rooms(x, y, roomWidth, roomHeight);
+                if (collidedWithPreviousRooms(rooms, i)) {
+                    rooms[i + 1] = null;
+                }
+            }
+        }
+    }
 
+    public static void setRooms(TETile[][] tiles){
+        for(int i = 0; i < rooms.length; i++){
+            if(rooms[i] == null){
+                break;
+            }
+            rooms[i].draw(tiles);
+        }
+    }
+    public static void setPlayer(TETile[][] tiles){
 
+        tiles[player.x][player.y] = Tileset.PLAYER;
+    }
+
+    public static void processInput(TETile[][] world, char input){
+        switch(input){
+            case 'w':
+                if(world[player.x][player.y + 1].description().equals("floor")) {
+                    player.moveTop();
+                }
+                break;
+            case 'a':
+                if(world[player.x - 1][player.y].description().equals("floor")){
+                    player.moveLeft();
+                }
+                break;
+            case 's':
+                if(world[player.x][player.y - 1].description().equals("floor")) {
+                    player.moveBot();
+                }
+                break;
+
+            case 'd':
+                if(world[player.x + 1][player.y].description().equals("floor") ) {
+                    player.moveRight();
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
 }

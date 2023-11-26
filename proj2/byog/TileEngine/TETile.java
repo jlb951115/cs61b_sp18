@@ -1,11 +1,10 @@
 package byog.TileEngine;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
-//import edu.princeton.cs.introcs.StdDraw;
+import edu.princeton.cs.introcs.StdDraw;
 import byog.Core.RandomUtils;
 
 /**
@@ -22,7 +21,7 @@ import byog.Core.RandomUtils;
  * to make your TETile class mutable, if you prefer.
  */
 
-public class TETile implements Serializable {
+public class TETile {
     private final char character; // Do not rename character or the autograder will break.
     private final Color textColor;
     private final Color backgroundColor;
@@ -82,7 +81,7 @@ public class TETile implements Serializable {
      * @param x x coordinate
      * @param y y coordinate
      */
-   /* public void draw(double x, double y) {
+    public void draw(double x, double y) {
         if (filepath != null) {
             try {
                 StdDraw.picture(x + 0.5, y + 0.5, filepath);
@@ -98,7 +97,7 @@ public class TETile implements Serializable {
         StdDraw.setPenColor(textColor);
         StdDraw.text(x + 0.5, y + 0.5, Character.toString(character()));
     }
-*/
+
     /** Character representation of the tile. Used for drawing in text mode.
      * @return character representation
      */
@@ -189,28 +188,5 @@ public class TETile implements Serializable {
         }
 
         return copy;
-    }
-
-    @Override
-    /** Provides an equals method that is consistent
-     *  with the way that the autograder works.
-     */
-    public boolean equals(Object x) {
-        if (this == x) {
-            return true;
-        }
-        if (x == null) {
-            return false;
-        }
-        if (this.getClass() != x.getClass()) {
-            return false;
-        }
-        TETile that = (TETile) x;
-        return this.character == that.character;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.character;
     }
 }
