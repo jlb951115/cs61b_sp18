@@ -1,6 +1,7 @@
 package byog.TileEngine;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -21,7 +22,7 @@ import byog.Core.RandomUtils;
  * to make your TETile class mutable, if you prefer.
  */
 
-public class TETile {
+public class TETile implements Serializable {
     private final char character; // Do not rename character or the autograder will break.
     private final Color textColor;
     private final Color backgroundColor;
@@ -188,5 +189,28 @@ public class TETile {
         }
 
         return copy;
+    }
+
+    @Override
+    /** Provides an equals method that is consistent
+     *  with the way that the autograder works.
+     */
+    public boolean equals(Object x) {
+        if (this == x) {
+            return true;
+        }
+        if (x == null) {
+            return false;
+        }
+        if (this.getClass() != x.getClass()) {
+            return false;
+        }
+        TETile that = (TETile) x;
+        return this.character == that.character;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.character;
     }
 }
